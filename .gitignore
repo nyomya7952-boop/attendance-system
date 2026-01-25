@@ -32,3 +32,5 @@ auth.json
 docker/mysql/data/*
 !docker/mysql/data/.gitkeep
 .cursorrules
+
+テーブル構成.md

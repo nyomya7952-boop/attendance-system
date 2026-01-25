@@ -1,0 +1,158 @@
+/* メール認証誘導画面 */
+
+body {
+    position: relative;
+    width: 100%;
+    min-height: 982px;
+    background: #FFFFFF;
+}
+
+/* メール認証コンテナ */
+.verify-email__content {
+    position: relative;
+    width: 100%;
+    max-width: 1512px;
+    margin: 0 auto;
+    padding: 0 20px;
+    padding-top: 108px;
+    padding-bottom: 0;
+    /* ヘッダー(80px) + 余白(28px) = 108px、Figmaの188pxから80pxを引いた値 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    min-height: auto;
+}
+
+/* メッセージ部分 */
+.verify-email__message {
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+.verify-email__message p {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 29px;
+    color: #000000;
+    margin: 0;
+    margin-bottom: 8px;
+}
+
+.verify-email__message p:last-child {
+    margin-bottom: 0;
+}
+
+/* 成功メッセージ */
+.verify-email__success {
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 20px;
+    padding: 12px;
+    text-align: center;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+}
+
+/* アクション部分 */
+.verify-email__actions {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* 認証はこちらからボタン */
+.verify-email__button {
+    box-sizing: border-box;
+    width: 257px;
+    height: 69px;
+    background: #D9D9D9;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 29px;
+    color: #000000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: opacity 0.2s;
+    cursor: pointer;
+}
+
+.verify-email__button:hover {
+    opacity: 0.8;
+}
+
+.verify-email__button:active {
+    opacity: 0.6;
+}
+
+/* 認証メールを再送するリンク */
+.verify-email__resend-link {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    color: #0073CC;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-align: center;
+    transition: opacity 0.2s;
+}
+
+.verify-email__resend-link:hover {
+    opacity: 0.8;
+}
+
+.verify-email__resend-link:active {
+    opacity: 0.6;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .verify-email__content {
+        padding: 60px 20px;
+    }
+
+    .verify-email__message {
+        margin-bottom: 40px;
+    }
+
+    .verify-email__message p {
+        font-size: 20px;
+        line-height: 24px;
+    }
+
+    .verify-email__button {
+        width: 100%;
+        max-width: 257px;
+        height: 60px;
+        font-size: 20px;
+        line-height: 24px;
+    }
+
+    .verify-email__resend-link {
+        font-size: 18px;
+        line-height: 22px;
+    }
+}
