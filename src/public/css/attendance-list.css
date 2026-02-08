@@ -20,7 +20,6 @@ body {
     margin: 0 auto;
 }
 
-/* コントロールエリア */
 .attendance-list__controls {
     display: flex;
     align-items: center;
@@ -28,40 +27,26 @@ body {
     margin-bottom: 20px;
 }
 
-/* 一覧ボタン */
-.attendance-list__list-button {
-    width: 120px;
-    height: 36px;
-    background: #FFFFFF;
-    border: none;
-    border-radius: 5px;
+/* 一覧見出し */
+.attendance-list__list-title {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 30px;
     line-height: 19px;
     letter-spacing: 0.15em;
-    color: #737373;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.2s;
-}
-
-.attendance-list__list-button:hover {
-    opacity: 0.8;
-}
-
-.attendance-list__list-button:active {
-    opacity: 0.6;
+    color: #000000;
 }
 
 /* 日付セレクター */
 .attendance-list__date-selector {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 10px;
+    padding: 14px 24px;
     margin-left: auto;
 }
 
@@ -70,10 +55,12 @@ body {
     border: none;
     cursor: pointer;
     padding: 0;
+    gap: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: opacity 0.2s;
+    text-decoration: none;
 }
 
 .attendance-list__date-arrow:hover {
@@ -84,23 +71,47 @@ body {
     opacity: 0.5;
 }
 
-.attendance-list__date-arrow--prev {
-    width: 35px;
-    height: 19px;
+.attendance-list__left-arrow,
+.attendance-list__right-arrow {
+    height: 18px;
+    width: auto;
+    display: block;
 }
 
-.attendance-list__date-arrow--next {
-    width: 20px;
-    height: 15px;
+.attendance-list__left-arrow,
+.attendance-list__right-arrow {
+    filter: invert(45%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(85%) contrast(90%);
+}
+
+.attendance-list__date-arrow-text {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 25px;
+    color: #737373;
+    list-style: none;
+}
+
+.attendance-list__date-center {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto;
+}
+
+.attendance-list__calendar {
+    width: 24px;
+    height: 24px;
+    display: block;
 }
 
 .attendance-list__date-display {
-    width: 123px;
     height: 25px;
     font-family: 'Inter', sans-serif;
     font-style: normal;
-    font-weight: 400;
-    font-size: 20px;
+    font-weight: 700;
+    font-size: 24px;
     line-height: 25px;
     color: #000000;
     text-align: center;
@@ -110,9 +121,15 @@ body {
 .attendance-list__table-container {
     background: #FFFFFF;
     border-radius: 10px;
-    padding: 20px;
-    overflow-x: auto;
+    margin-top: 20px;
+    padding: 20px 0;
     max-height: calc(100vh - 300px);
+    overflow: hidden;
+}
+
+.attendance-list__table-scroll {
+    max-height: calc(100vh - 300px);
+    overflow-x: auto;
     overflow-y: auto;
 }
 
@@ -198,47 +215,4 @@ body {
 
 .attendance-list__detail-link:hover {
     color: #000000;
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .attendance-list__content {
-        padding: 20px 10px;
-    }
-
-    .attendance-list__container {
-        max-width: 100%;
-    }
-
-    .attendance-list__controls {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-
-    .attendance-list__date-selector {
-        margin-left: 0;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .attendance-list__table-container {
-        padding: 10px;
-    }
-
-    .attendance-list__table-header-cell,
-    .attendance-list__table-cell {
-        padding: 8px 10px;
-        font-size: 14px;
-    }
-
-    .attendance-list__table-header-cell:first-child,
-    .attendance-list__table-cell:first-child {
-        padding-left: 15px;
-    }
-
-    .attendance-list__table-header-cell:last-child,
-    .attendance-list__table-cell:last-child {
-        padding-right: 15px;
-    }
 }

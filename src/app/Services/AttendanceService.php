@@ -5,7 +5,8 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use App\Models\Attendance;
-use App\Models\AttendanceBreaks;
+use App\Models\AttendanceBreak;
+use App\Enums\AttendanceStatus;
 
 class AttendanceService
 {
@@ -19,6 +20,7 @@ class AttendanceService
                 'user_id' => auth()->user()->id,
                 'work_date' => now()->format('Y-m-d'),
                 'started_at' => now(),
+                'status' => AttendanceStatus::CLOCKED_IN,
             ]);
 
             return redirect()->route('attendance.index')
@@ -58,9 +60,31 @@ class AttendanceService
                     ->with('error', '既に退勤済みです。');
             }
 
-            $attendance->ended_at = now();
-            $attendance->save();
+            if ($attendance->attendanceBreak()->whereNull('break_end_at')->exists()) {
+                return redirect()->route('attendance.index')
+                    ->with('error', '休憩中のため退勤できません。');
+            }
 
+            $attendance->ended_at = now();
+            $attendance->status = AttendanceStatus::CLOCKED_OUT;
+
+            // breakTimeを計算（終了済みの休憩のみ）
+            $totalBreakMinutes = $attendance->attendanceBreak()
+                ->whereNotNull('break_end_at')
+                ->get()
+                ->sum(function ($break) {
+                    return $break->break_end_at->diffInMinutes($break->break_start_at);
+                });
+
+            // 合計勤務時間を計算（退勤済みの場合のみ）
+            $totalWorkMinutes = max(
+                0,
+                $attendance->ended_at->diffInMinutes($attendance->started_at) - $totalBreakMinutes
+            );
+
+            $attendance->total_break_minutes = $totalBreakMinutes;
+            $attendance->total_work_minutes = $totalWorkMinutes;
+            $attendance->save();
             return redirect()->route('attendance.index')
                 ->with('message', '退勤しました。');
         } catch (QueryException $e) {
@@ -84,8 +108,9 @@ class AttendanceService
                     ->with('error', '出勤記録が見つかりません。');
             }
 
-            $attendanceBreak = $attendance->attendanceBreaks()->create([
+            $attendanceBreak = $attendance->attendanceBreak()->create([
                 'break_start_at' => now(),
+                'status' => AttendanceStatus::ON_BREAK,
             ]);
 
             return redirect()->route('attendance.index')
@@ -111,10 +136,22 @@ class AttendanceService
                     ->with('error', '出勤記録が見つかりません。');
             }
 
-            $attendanceBreak = $attendance->attendanceBreaks()
+            if ($attendance->ended_at) {
+                return redirect()->route('attendance.index')
+                    ->with('error', '既に退勤済みです。');
+            }
+
+            $openBreaks = $attendance->attendanceBreak()
                 ->whereNull('break_end_at')
                 ->orderBy('break_start_at', 'desc')
-                ->first();
+                ->get();
+
+            if ($openBreaks->count() > 1) {
+                return redirect()->route('attendance.index')
+                    ->with('error', '休憩記録が複数残っています。');
+            }
+
+            $attendanceBreak = $openBreaks->first();
 
             if (!$attendanceBreak) {
                 return redirect()->route('attendance.index')
@@ -123,24 +160,8 @@ class AttendanceService
 
             // 休憩終了時刻を設定
             $attendanceBreak->break_end_at = now();
+            $attendance->status = AttendanceStatus::CLOCKED_IN;
             $attendanceBreak->save();
-
-            // breakTimeを計算（終了済みの休憩のみ）
-            $totalBreakMinutes = $attendance->attendanceBreaks()
-                ->whereNotNull('break_end_at')
-                ->get()
-                ->sum(function ($break) {
-                    return $break->break_end_at->diffInMinutes($break->break_start_at);
-                });
-
-            // 合計勤務時間を計算（退勤済みの場合のみ）
-            $totalWorkMinutes = 0;
-            if ($attendance->ended_at) {
-                $totalWorkMinutes = $attendance->ended_at->diffInMinutes($attendance->started_at) - $totalBreakMinutes;
-            }
-
-            $attendance->total_break_minutes = $totalBreakMinutes;
-            $attendance->total_work_minutes = $totalWorkMinutes;
             $attendance->save();
 
             return redirect()->route('attendance.index')

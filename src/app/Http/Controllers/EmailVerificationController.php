@@ -81,9 +81,9 @@ class EmailVerificationController extends Controller
             if (!Auth::check()) {
                 Auth::login($user);
             }
-            // セッションからメールアドレスを削除し、プロフィール編集画面にリダイレクト
+            // セッションからメールアドレスを削除し、トップページにリダイレクト
             $request->session()->forget('verification_email');
-            return redirect()->route('user.edit');
+            return redirect('/');
         }
 
         if ($user->markEmailAsVerified()) {
@@ -94,9 +94,9 @@ class EmailVerificationController extends Controller
         // メール認証完了後、ログイン状態にする
         Auth::login($user);
 
-        // セッションからメールアドレスを削除し、プロフィール編集画面にリダイレクト
+        // セッションからメールアドレスを削除し、トップページにリダイレクト
         $request->session()->forget('verification_email');
-        return redirect()->route('user.edit');
+        return redirect('/');
     }
 }
 

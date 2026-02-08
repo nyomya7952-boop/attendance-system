@@ -163,36 +163,3 @@ body {
     color: #0073CC;
     text-decoration: underline;
 }
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .login-form__content {
-        padding: 60px 20px;
-    }
-
-    .login-form__heading h1 {
-        font-size: 28px;
-        line-height: 36px;
-    }
-
-    .form__label--item {
-        font-size: 20px;
-        line-height: 24px;
-    }
-
-    .form__input--text input {
-        height: 50px;
-        font-size: 14px;
-    }
-
-    .form__button-submit {
-        height: 50px;
-        font-size: 20px;
-        line-height: 24px;
-    }
-
-    .register__button-submit {
-        font-size: 18px;
-        line-height: 22px;
-    }
-}

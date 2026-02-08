@@ -21,13 +21,15 @@ class AttendanceApprovalFactory extends Factory
     {
         $finalStartedAt = $this->faker->dateTimeBetween('-1 month', 'now');
         $finalEndedAt = (clone $finalStartedAt)->modify('+8 hours');
+        $finalWorkDate = $finalStartedAt->format('Y-m-d');
 
         return [
             'attendance_id' => Attendance::factory(),
             'attendance_request_id' => AttendanceRequest::factory(),
             'approved_by' => User::factory(),
             'approved_at' => now(),
-            'status' => $this->faker->randomElement(['approved', 'rejected']),
+            'status' => $this->faker->randomElement(['approved']),
+            'final_work_date' => $finalWorkDate,
             'final_started_at' => $finalStartedAt,
             'final_ended_at' => $finalEndedAt,
             'final_break_minutes' => $this->faker->numberBetween(0, 60),

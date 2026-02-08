@@ -15,6 +15,7 @@ class AttendanceApproval extends Model
         'approved_by',
         'approved_at',
         'status',
+        'final_work_date',
         'final_started_at',
         'final_ended_at',
         'final_break_minutes',

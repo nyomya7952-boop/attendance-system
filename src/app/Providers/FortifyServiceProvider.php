@@ -7,11 +7,14 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use App\Enums\Role;
+use App\Http\Responses\LoginResponse;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -23,6 +26,8 @@ class FortifyServiceProvider extends ServiceProvider
     {
         // カスタムログインレスポンスを登録
         $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
+        // FortifyのLoginRequestを自前のバリデーションに差し替え
+        $this->app->bind(\Laravel\Fortify\Http\Requests\LoginRequest::class, LoginRequest::class);
     }
 
     /**
@@ -38,7 +43,7 @@ class FortifyServiceProvider extends ServiceProvider
 
         // 一般ユーザー用ログイン画面
         Fortify::loginView(function () {
-            return view('auth.login');
+            return view('login');
         });
 
         // メール認証画面

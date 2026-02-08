@@ -27,7 +27,7 @@ class StampingController extends Controller
 
         $attendance = Attendance::where('user_id', auth()->user()->id)
             ->where('work_date', now()->format('Y-m-d'))
-            ->with(['attendanceBreaks' => function($query) {
+            ->with(['attendanceBreak' => function($query) {
                 $query->orderBy('break_start_at', 'desc')->limit(1);
             }])
             ->first();
@@ -40,7 +40,7 @@ class StampingController extends Controller
             if ($attendance->ended_at) {
                 $attendanceStatus = AttendanceStatus::CLOCKED_OUT;
             } else {
-                $attendanceBreak = $attendance->attendanceBreaks->first();
+                $attendanceBreak = $attendance->attendanceBreak->first();
                 if ($attendanceBreak && !$attendanceBreak->break_end_at) {
                     // attendanceBreakが存在し、かつbreak_end_atがNullである(休憩中)
                     $attendanceStatus = AttendanceStatus::ON_BREAK;

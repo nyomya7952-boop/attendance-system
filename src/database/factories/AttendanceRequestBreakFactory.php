@@ -3,12 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\AttendanceRequest;
-use App\Models\AttendanceRequestsBreak;
+use App\Models\AttendanceRequestBreak;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AttendanceRequestBreakFactory extends Factory
 {
-    protected $model = AttendanceRequestsBreak::class;
+    protected $model = AttendanceRequestBreak::class;
 
     /**
      * Define the model's default state.

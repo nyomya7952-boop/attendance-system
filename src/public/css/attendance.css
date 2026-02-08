@@ -55,7 +55,7 @@ body {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: 400;
-    font-size: 40px;
+    font-size: 38px;
     line-height: 48px;
     color: #000000;
 }
@@ -74,8 +74,17 @@ body {
     color: #000000;
 }
 
+/* 出勤ボタン並び */
+.attendance__content form {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
 /* 出勤ボタン */
-.attendance__button {
+.attendance__button,
+.attendance__button--white {
     box-sizing: border-box;
     width: 221px;
     height: 77px;
@@ -97,12 +106,32 @@ body {
     transition: opacity 0.2s;
 }
 
-.attendance__button:hover {
+.attendance__button:hover,
+.attendance__button--white:hover {
     opacity: 0.8;
 }
 
-.attendance__button:active {
+.attendance__button:active,
+.attendance__button--white:active {
     opacity: 0.6;
+}
+
+/* 休憩ボタン */
+.attendance__button--white {
+    background: #FFFFFF;
+    color: #000000;
+}
+
+.attendance__message-text {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 31px;
+    color: #000000;
+    width: 100%;
+    max-width: 332px;
+    text-align: center;
 }
 
 /* レスポンシブ対応 */

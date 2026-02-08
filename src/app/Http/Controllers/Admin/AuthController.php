@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Enums\Role;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
-use Laravel\Fortify\Http\Requests\LoginRequest;
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -37,18 +37,8 @@ class AuthController extends Controller
         }
 
         // Fortify標準の認証処理を使用
-        $authenticatedSessionController = new AuthenticatedSessionController();
-
-        // リダイレクト先を一時的に変更
-        $originalHome = config('fortify.home');
-        config(['fortify.home' => '/admin/staff/list']);
-
-        try {
-            $response = $authenticatedSessionController->store($request);
-        } finally {
-            // 設定を元に戻す
-            config(['fortify.home' => $originalHome]);
-        }
+        $authenticatedSessionController = app(AuthenticatedSessionController::class);
+        $response = $authenticatedSessionController->store($request);
 
         return $response;
     }
@@ -62,8 +52,8 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // ログアウト後はログイン画面にリダイレクト
-        return redirect()->route('admin.login');
+        // ログアウト後は管理者ログイン画面にリダイレクト
+        return redirect()->route('admin.login.show');
     }
 }
 

@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->date('work_date');
-            $table->dateTime('started_at')
+            $table->dateTime('started_at');
             $table->dateTime('ended_at')->nullable();
             $table->string('status', 20);
             $table->integer('total_break_minutes')->nullable();
             $table->integer('total_work_minutes')->nullable();
+            $table->text('remarks')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->index('user_id');
             $table->index('work_date');
             $table->unique(['user_id', 'work_date']);

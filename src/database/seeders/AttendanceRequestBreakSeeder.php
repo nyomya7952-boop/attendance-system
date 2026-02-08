@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AttendanceRequest;
-use App\Models\AttendanceRequestsBreak;
+use App\Models\AttendanceRequestBreak;
 use Illuminate\Database\Seeder;
 
 class AttendanceRequestBreakSeeder extends Seeder
@@ -41,7 +41,7 @@ class AttendanceRequestBreakSeeder extends Seeder
                     $breakStartAt = $breakEndAt->copy()->subMinutes(rand(15, 60));
                 }
 
-                AttendanceRequestsBreak::factory()->create([
+                AttendanceRequestBreak::factory()->create([
                     'attendance_request_id' => $request->id,
                     'break_start_at' => $breakStartAt,
                     'break_end_at' => $breakEndAt,

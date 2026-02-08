@@ -23,13 +23,13 @@ class AttendanceRequestFactory extends Factory
 
         return [
             'attendance_id' => Attendance::factory(),
-            'parent_request_id' => null,
+            'requested_work_date' => $requestedStartedAt->format('Y-m-d'),
             'requested_started_at' => $requestedStartedAt,
             'requested_ended_at' => $requestedEndedAt,
-            'reason' => $this->faker->sentence(),
+            'remarks' => $this->faker->sentence(),
             'requested_by' => User::factory(),
             'approver_id' => User::factory(),
-            'status' => $this->faker->randomElement(['pending', 'approved', 'rejected']),
+            'status' => $this->faker->randomElement(['pending', 'approved']),
         ];
     }
 }

@@ -127,32 +127,3 @@ body {
 .verify-email__resend-link:active {
     opacity: 0.6;
 }
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .verify-email__content {
-        padding: 60px 20px;
-    }
-
-    .verify-email__message {
-        margin-bottom: 40px;
-    }
-
-    .verify-email__message p {
-        font-size: 20px;
-        line-height: 24px;
-    }
-
-    .verify-email__button {
-        width: 100%;
-        max-width: 257px;
-        height: 60px;
-        font-size: 20px;
-        line-height: 24px;
-    }
-
-    .verify-email__resend-link {
-        font-size: 18px;
-        line-height: 22px;
-    }
-}

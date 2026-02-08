@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Enums\Role;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
@@ -19,7 +23,7 @@ class AuthController extends Controller
     /**
      * 会員登録処理（一般ユーザー）
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
         // 入力したユーザ情報を登録
         $user = User::create([
@@ -38,11 +42,10 @@ class AuthController extends Controller
     }
 
     /**
-     * ログイン画面を表示（一般ユーザー）
+     * ログイン画面を表示
      */
-    public function login()
+    public function login(Request $request)
     {
-        // ログイン画面のビューを返す
         return view('login');
     }
 

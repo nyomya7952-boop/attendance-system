@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('attendance_id');
             $table->dateTime('break_start_at');
-            $table->dateTime('break_end_at');->nullable();
+            $table->dateTime('break_end_at')->nullable();
             $table->timestamps();
 
             $table->foreign('attendance_id')->references('id')->on('attendances')->onDelete('cascade');

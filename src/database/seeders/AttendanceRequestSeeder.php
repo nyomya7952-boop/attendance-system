@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\AttendanceRequest;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Enums\AttendanceRequestStatus;
 
 class AttendanceRequestSeeder extends Seeder
 {
@@ -14,7 +15,7 @@ class AttendanceRequestSeeder extends Seeder
      */
     public function run(): void
     {
-        $attendances = Attendance::all();
+        $attendances = Attendance::whereRaw('id % 3 = 1')->get();
         $users = User::all();
 
         if ($attendances->isEmpty() || $users->isEmpty()) {
@@ -32,7 +33,7 @@ class AttendanceRequestSeeder extends Seeder
                 $requestedEndedAt = \Carbon\Carbon::parse($attendance->ended_at)
                     ->addMinutes(rand(-30, 30));
 
-                // 申請者（勤怠の所有者または他のユーザー）
+                // 申請者
                 $requestedBy = $users->random();
 
                 // 承認者（申請者以外のユーザー、管理者ロールを持つユーザーを優先）
@@ -42,31 +43,33 @@ class AttendanceRequestSeeder extends Seeder
 
                 AttendanceRequest::factory()->create([
                     'attendance_id' => $attendance->id,
-                    'parent_request_id' => null,
+                    'requested_work_date' => $requestedStartedAt->format('Y-m-d'),
                     'requested_started_at' => $requestedStartedAt,
                     'requested_ended_at' => $requestedEndedAt,
-                    'reason' => $this->getRandomReason(),
+                    'remarks' => $this->getRandomRemarks(),
                     'requested_by' => $requestedBy->id,
                     'approver_id' => $approver?->id,
                     'status' => $this->getRandomStatus(),
                 ]);
+
+
             }
         }
     }
 
     /**
-     * ランダムな申請理由を取得
+     * ランダムな備考を取得
      */
-    private function getRandomReason(): string
+    private function getRandomRemarks(): string
     {
-        $reasons = [
+        $remarks = [
             '出勤時刻の修正申請です。',
             '退勤時刻の修正申請です。',
             '打刻忘れのため修正申請します。',
             'システムエラーのため修正申請します。',
             '勤務時間の訂正をお願いします。',
         ];
-        return $reasons[array_rand($reasons)];
+        return $remarks[array_rand($remarks)];
     }
 
     /**
@@ -74,7 +77,10 @@ class AttendanceRequestSeeder extends Seeder
      */
     private function getRandomStatus(): string
     {
-        $statuses = ['pending', 'approved', 'rejected'];
+        $statuses = [
+            AttendanceRequestStatus::SUBMITTED->value,
+            AttendanceRequestStatus::APPROVED->value,
+        ];
         return $statuses[array_rand($statuses)];
     }
 }

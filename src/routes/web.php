@@ -1,11 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\StampingController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RequestController;
+use App\Enums\Role;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
@@ -22,11 +24,24 @@ use App\Http\Controllers\Admin\RequestController as AdminRequestController;
 |
 */
 
+Route::get('/', function () {
+    if (Auth::check()) {
+        $user = Auth::user();
+
+        if ($user && $user->role_id === Role::ADMIN->value) {
+            return redirect('/admin/attendance/list');
+        }
+
+        return redirect('/attendance');
+    }
+
+    return redirect('/login');
+});
+
 // 一般ユーザー用ルート
 // 認証不要のルート
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register.show');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::get('/login', [AuthController::class, 'login'])->name('login');
 
 // メール認証関連
 Route::get('/email/verify', [EmailVerificationController::class, 'showVerificationNotice'])->name('verification.notice');
@@ -67,24 +82,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // スタッフ一覧
         Route::get('/staff/list', [StaffController::class, 'index'])->name('staff.list');
 
+        // スタッフ別勤怠一覧
+        Route::get('/attendance/staff/{id}', [StaffController::class, 'showAttendanceStaffList'])->name('staff.attendance');
+        Route::get('/attendance/staff/{id}/csv', [StaffController::class, 'exportAttendanceStaffCsv'])->name('staff.attendance.csv');
+
         // 勤怠一覧・詳細（管理者）
         Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])->name('attendance.list');
         Route::get('/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('attendance.show');
         Route::post('/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('attendance.update');
 
-        // スタッフ別勤怠一覧
-        Route::get('/attendance/staff/{id}', [AdminAttendanceController::class, 'showStaffAttendance'])->name('attendance.staff');
-        Route::post('/attendance/staff/{id}', [AdminAttendanceController::class, 'updateStaffAttendance'])->name('attendance.staff.update');
+        // 申請一覧（管理者）
+        Route::get('/stamp_correction_request/list', [AdminRequestController::class, 'index'])->name('request.list');
+
+        // 修正申請承認
+        Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminRequestController::class, 'showApproval'])->name('request.approve.show');
+        Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminRequestController::class, 'approve'])->name('request.approve');
 
     });
 });
 
-// 管理者用申請関連ルート（/admin/プレフィックスなし）
-Route::middleware(['auth'])->group(function () {
-    // 申請一覧（管理者）
-    Route::get('/stamp_correction_request/list', [AdminRequestController::class, 'index'])->name('admin.request.list');
-
-    // 修正申請承認
-    Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminRequestController::class, 'showApproval'])->name('admin.request.approve.show');
-    Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminRequestController::class, 'approve'])->name('admin.request.approve');
-});

@@ -27,7 +27,7 @@ attendancesテーブル
 	updated_at	timestamp
 	※外部キー: user_id -> users.id
 	※インデックス: user_id, work_date, (user_id, work_date) unique
-	※status: 'draft', 'submitted', 'approved', 'rejected' など
+	※status: 'draft', 'submitted', 'approved' など
 		
 		
 		
@@ -61,7 +61,7 @@ attendance_requestsテーブル
 	updated_at	timestamp
 	※外部キー: attendance_id -> attendances.id (nullable), parent_request_id -> attendance_requests.id (nullable), requested_by -> users.id, approver_id -> users.id (nullable)
 	※インデックス: attendance_id, parent_request_id, requested_by, approver_id, status
-	※status: 'pending', 'approved', 'rejected'
+	※status: 'submitted', 'approved'
 	※parent_request_id: 修正申請の場合、元の申請IDを参照（NULLの場合は初回申請）
 		
 		
@@ -91,7 +91,6 @@ attendance_approvalsテーブル
 	approved_by	unsigned bigint
 	approved_at	timestamp
 	status	varchar(20)
-	rejection_reason	varchar(255)
 	final_started_at	datetime
 	final_ended_at	datetime
 	final_break_minutes	int
@@ -100,7 +99,7 @@ attendance_approvalsテーブル
 	updated_at	timestamp
 	※外部キー: attendance_id -> attendances.id, attendance_request_id -> attendance_requests.id, approved_by -> users.id
 	※インデックス: attendance_request_id, approved_by, status
-	※status: 'approved', 'rejected'
+	※status: 'approved'
 		
 		
 rolesテーブル		

@@ -11,23 +11,24 @@ class AttendanceRequest extends Model
 
     protected $fillable = [
         'attendance_id',
-        'parent_request_id',
+        'requested_work_date',
         'requested_started_at',
         'requested_ended_at',
-        'reason',
+        'remarks',
         'requested_by',
         'approver_id',
         'status',
     ];
 
+    protected $casts = [
+        'requested_work_date' => 'date',
+        'requested_started_at' => 'datetime',
+        'requested_ended_at' => 'datetime',
+    ];
+
     public function attendance()
     {
         return $this->belongsTo(Attendance::class);
-    }
-
-    public function parentRequest()
-    {
-        return $this->belongsTo(AttendanceRequest::class, 'parent_request_id');
     }
 
     public function requestedBy()
@@ -38,5 +39,10 @@ class AttendanceRequest extends Model
     public function approver()
     {
         return $this->belongsTo(User::class, 'approver_id');
+    }
+
+    public function attendanceRequestBreaks()
+    {
+        return $this->hasMany(AttendanceRequestBreak::class);
     }
 }

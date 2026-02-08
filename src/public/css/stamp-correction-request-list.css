@@ -1,0 +1,171 @@
+/* 申請一覧画面（一般ユーザー） */
+
+body {
+    background: #F0EFF2;
+}
+
+.stamp-correction-request-list__content {
+    position: relative;
+    width: 100%;
+    max-width: 1512px;
+    margin: 0 auto;
+    padding: 28px 20px;
+    min-height: calc(100vh - 80px);
+}
+
+.stamp-correction-request-list__container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.stamp-correction-request-list__controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stamp-correction-request-list__title-line {
+    width: auto;
+    height: auto;
+}
+
+.stamp-correction-request-list__list-title {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    color: #000000;
+}
+
+.stamp-correction-request-list__tabs {
+    display: flex;
+    gap: 40px;
+    max-width: 900px;
+    margin: 0 auto 20px;
+    border-bottom: 1px solid #000000;
+    padding-bottom: 12px;
+}
+
+.stamp-correction-request-list__tab {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    color: #000000;
+    text-decoration: none;
+}
+
+.stamp-correction-request-list__tab--active {
+    font-weight: 700;
+}
+
+.stamp-correction-request-list__table-container {
+    background: #FFFFFF;
+    border-radius: 10px;
+    margin: 0 auto;
+    padding: 20px 0;
+    max-width: 900px;
+    max-height: calc(100vh - 300px);
+    overflow: hidden;
+}
+
+.stamp-correction-request-list__table-scroll {
+    max-height: calc(100vh - 300px);
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.stamp-correction-request-list__table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stamp-correction-request-list__table-header {
+    border-bottom: 3px solid #E1E1E1;
+}
+
+.stamp-correction-request-list__table-header-cell {
+    padding: 12px 20px;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    color: #737373;
+    background: #FFFFFF;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.stamp-correction-request-list__table-body {
+    background: #FFFFFF;
+}
+
+.stamp-correction-request-list__table-row {
+    border-bottom: 2px solid #E1E1E1;
+    transition: background-color 0.2s;
+}
+
+.stamp-correction-request-list__table-row:last-child {
+    border-bottom: none;
+}
+
+.stamp-correction-request-list__table-row:hover {
+    background-color: #F9F9F9;
+}
+
+.stamp-correction-request-list__table-cell {
+    padding: 10px 5px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    letter-spacing: 0.15em;
+    color: #737373;
+    text-align: center;
+}
+
+.stamp-correction-request-list__detail-link {
+    color: #000000;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.stamp-correction-request-list__detail-link:hover {
+    color: #737373;
+}
+
+.stamp-correction-request-list__table-cell--status {
+    width: 100px;
+}
+
+.stamp-correction-request-list__table-cell--name {
+    width: 150px;
+}
+
+.stamp-correction-request-list__table-cell--date {
+    width: 100px;
+}
+
+.stamp-correction-request-list__table-cell--remarks {
+    width: 250px;
+}
+
+.stamp-correction-request-list__table-cell--created-at {
+    width: 100px;
+}
+
+.stamp-correction-request-list__table-cell--detail-link {
+    width: 100px;
+}

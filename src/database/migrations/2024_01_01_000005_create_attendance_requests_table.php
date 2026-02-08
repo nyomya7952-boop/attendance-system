@@ -14,24 +14,21 @@ return new class extends Migration
         Schema::create('attendance_requests', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('attendance_id')->nullable();
-            $table->unsignedBigInteger('parent_request_id')->nullable();
+            $table->date('requested_work_date');
             $table->dateTime('requested_started_at');
             $table->dateTime('requested_ended_at');
-            $table->string('reason', 255);
+            $table->text('remarks')->nullable();
             $table->unsignedBigInteger('requested_by');
             $table->unsignedBigInteger('approver_id')->nullable();
             $table->string('status', 20)->nullable();
             $table->timestamps();
 
-            $table->foreign('attendance_id')->references('id')->on('attendances');
-            $table->foreign('parent_request_id')->references('id')->on('attendance_requests');
-            $table->foreign('requested_by')->references('id')->on('users');
-            $table->foreign('approver_id')->references('id')->on('users');
+            $table->foreign('attendance_id')->references('id')->on('attendances')->onDelete('cascade');
+            $table->foreign('requested_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('approver_id')->references('id')->on('users')->onDelete('cascade');
             $table->index('attendance_id');
-            $table->index('parent_request_id');
             $table->index('requested_by');
             $table->index('approver_id');
-            $table->index('status');
         });
     }
 

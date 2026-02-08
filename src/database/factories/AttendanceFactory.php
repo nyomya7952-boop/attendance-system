@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Attendance;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Enums\AttendanceStatus;
 
 class AttendanceFactory extends Factory
 {
@@ -26,9 +27,10 @@ class AttendanceFactory extends Factory
             'work_date' => $workDate,
             'started_at' => $startedAt,
             'ended_at' => $endedAt,
-            'status' => $this->faker->randomElement(['draft', 'submitted', 'approved', 'rejected']),
+            'status' => $this->faker->randomElement(AttendanceStatus::cases()),
             'total_break_minutes' => $this->faker->numberBetween(0, 60),
             'total_work_minutes' => $this->faker->numberBetween(240, 480),
+            'remarks' => $this->faker->sentence(),
         ];
     }
 }

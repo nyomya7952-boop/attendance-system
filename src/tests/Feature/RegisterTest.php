@@ -1,0 +1,166 @@
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+use App\Models\User;
+use App\Models\Role as RoleModel;
+use App\Enums\Role as RoleEnum;
+
+class RegisterTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seedRoles();
+    }
+
+    private function seedRoles(): void
+    {
+        RoleModel::query()->forceCreate([
+            'id' => RoleEnum::GENERAL_USER->value,
+            'name' => RoleEnum::GENERAL_USER->label(),
+        ]);
+        RoleModel::query()->forceCreate([
+            'id' => RoleEnum::ADMIN->value,
+            'name' => RoleEnum::ADMIN->label(),
+        ]);
+    }
+
+    /**
+     * 名前が未入力の場合、バリデーションメッセージが表示される
+     */
+    public function testNameValidationWhenEmpty()
+    {
+        $response = $this->get(route('register.show'));
+        $response->assertStatus(200);
+
+        $response = $this->post(route('register'), [
+            'name' => '',
+            'email' => 'test@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertSessionHasErrors(['name']);
+        $errors = $response->getSession()->get('errors');
+        $this->assertEquals('お名前を入力してください', $errors->get('name')[0]);
+        $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
+    }
+
+    /**
+     * メールアドレスが未入力の場合、バリデーションメッセージが表示される
+     */
+    public function testEmailValidationWhenEmpty()
+    {
+        $response = $this->get(route('register.show'));
+        $response->assertStatus(200);
+
+        $response = $this->post(route('register'), [
+            'name' => 'テストユーザー',
+            'email' => '',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertSessionHasErrors(['email']);
+        $errors = $response->getSession()->get('errors');
+        $this->assertEquals('メールアドレスを入力してください', $errors->get('email')[0]);
+        $this->assertDatabaseMissing('users', ['name' => 'テストユーザー']);
+    }
+
+    /**
+     * パスワードが8文字未満の場合、バリデーションメッセージが表示される
+     */
+    public function testPasswordValidationWhenLessThan8Characters()
+    {
+        $response = $this->get(route('register.show'));
+        $response->assertStatus(200);
+
+        $response = $this->post(route('register'), [
+            'name' => 'テストユーザー',
+            'email' => 'test@example.com',
+            'password' => 'pass123',
+            'password_confirmation' => 'pass123',
+        ]);
+
+        $response->assertSessionHasErrors(['password']);
+        $errors = $response->getSession()->get('errors');
+        $this->assertEquals('パスワードは8文字以上で入力してください', $errors->get('password')[0]);
+        $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
+    }
+
+    /**
+     * パスワードが一致しない場合、バリデーションメッセージが表示される
+     */
+    public function testPasswordConfirmationValidationWhenMismatch()
+    {
+        $response = $this->get(route('register.show'));
+        $response->assertStatus(200);
+
+        $response = $this->post(route('register'), [
+            'name' => 'テストユーザー',
+            'email' => 'test@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password456',
+        ]);
+
+        $response->assertSessionHasErrors(['password_confirmation']);
+        $errors = $response->getSession()->get('errors');
+        $this->assertEquals('パスワードと一致しません', $errors->get('password_confirmation')[0]);
+        $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
+    }
+
+    /**
+     * パスワードが未入力の場合、バリデーションメッセージが表示される
+     */
+    public function testPasswordValidationWhenEmpty()
+    {
+        $response = $this->get(route('register.show'));
+        $response->assertStatus(200);
+
+        $response = $this->post(route('register'), [
+            'name' => 'テストユーザー',
+            'email' => 'test@example.com',
+            'password' => '',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertSessionHasErrors(['password']);
+        $errors = $response->getSession()->get('errors');
+        $this->assertEquals('パスワードを入力してください', $errors->get('password')[0]);
+        $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
+    }
+
+    /**
+     * 全ての項目が入力されている場合、会員情報が登録され、メール認証画面に遷移される
+     */
+    public function testSuccessfulRegistrationRedirectsToVerificationNotice()
+    {
+        $response = $this->get(route('register.show'));
+        $response->assertStatus(200);
+
+        $userData = [
+            'name' => 'テストユーザー',
+            'email' => 'test@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ];
+
+        $response = $this->post(route('register'), $userData);
+
+        $response->assertRedirect(route('verification.notice'));
+        $this->assertDatabaseHas('users', [
+            'name' => 'テストユーザー',
+            'email' => 'test@example.com',
+        ]);
+
+        $user = User::where('email', 'test@example.com')->first();
+        $this->assertNotNull($user);
+        $this->assertNull($user->email_verified_at);
+    }
+}

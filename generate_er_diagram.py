@@ -135,7 +135,7 @@ tables = {
             {'id': 4, 'pk': 'FK', 'name': 'approved_by', 'fk': True},
             {'id': 5, 'pk': '', 'name': 'approved_at'},
             {'id': 6, 'pk': '', 'name': 'status'},
-            {'id': 7, 'pk': '', 'name': 'rejection_reason'},
+            {'id': 7, 'pk': '', 'name': 'approved_at'},
             {'id': 8, 'pk': '', 'name': 'final_started_at'},
             {'id': 9, 'pk': '', 'name': 'final_ended_at'},
             {'id': 10, 'pk': '', 'name': 'final_break_minutes'},

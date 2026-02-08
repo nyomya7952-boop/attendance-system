@@ -18,6 +18,13 @@ class Attendance extends Model
         'status',
         'total_break_minutes',
         'total_work_minutes',
+        'remarks',
+    ];
+
+    protected $casts = [
+        'work_date' => 'date',
+        'started_at' => 'datetime',
+        'ended_at' => 'datetime',
     ];
 
     protected static function boot()

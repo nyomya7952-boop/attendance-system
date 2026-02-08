@@ -1,0 +1,242 @@
+/* 勤怠一覧画面（一般ユーザー） */
+
+body {
+    background: #F0EFF2;
+}
+
+.attendance-staff-list__content {
+    position: relative;
+    width: 100%;
+    max-width: 1512px;
+    margin: 0 auto;
+    padding: 28px 20px;
+    min-height: calc(100vh - 80px);
+}
+
+.attendance-staff-list__container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.attendance-staff-list__controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* 一覧見出し */
+.attendance-staff-list__list-title {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    color: #000000;
+}
+
+/* 日付セレクター */
+.attendance-staff-list__date-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 10px;
+    padding: 14px 24px;
+    margin-left: auto;
+}
+
+.attendance-staff-list__date-arrow {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+    text-decoration: none;
+}
+
+.attendance-staff-list__date-arrow:hover {
+    opacity: 0.7;
+}
+
+.attendance-staff-list__date-arrow:active {
+    opacity: 0.5;
+}
+
+.attendance-staff-list__left-arrow,
+.attendance-staff-list__right-arrow {
+    height: 18px;
+    width: auto;
+    display: block;
+}
+
+.attendance-staff-list__left-arrow,
+.attendance-staff-list__right-arrow {
+    filter: invert(45%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(85%) contrast(90%);
+}
+
+.attendance-staff-list__date-arrow-text {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 25px;
+    color: #737373;
+    list-style: none;
+}
+
+.attendance-staff-list__date-center {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto;
+}
+
+.attendance-staff-list__calendar {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+.attendance-staff-list__date-display {
+    height: 25px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 25px;
+    color: #000000;
+    text-align: center;
+}
+
+/* テーブルコンテナ */
+.attendance-staff-list__table-container {
+    background: #FFFFFF;
+    border-radius: 10px;
+    margin-top: 20px;
+    padding: 20px 0;
+    max-height: calc(100vh - 300px);
+    overflow: hidden;
+}
+
+.attendance-staff-list__table-scroll {
+    max-height: calc(100vh - 300px);
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+/* テーブル */
+.attendance-staff-list__table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.attendance-staff-list__table-header {
+    border-bottom: 2px solid #E1E1E1;
+}
+
+.attendance-staff-list__table-header-cell {
+    padding: 12px 20px;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    color: #737373;
+    background: #FFFFFF;
+}
+
+.attendance-staff-list__table-header-cell:first-child {
+    padding-left: 40px;
+}
+
+.attendance-staff-list__table-header-cell:last-child {
+    padding-right: 40px;
+}
+
+/* テーブルボディ */
+.attendance-staff-list__table-body {
+    background: #FFFFFF;
+}
+
+.attendance-staff-list__table-row {
+    border-bottom: 2px solid #E1E1E1;
+    transition: background-color 0.2s;
+}
+
+.attendance-staff-list__table-row:last-child {
+    border-bottom: none;
+}
+
+.attendance-staff-list__table-row:hover {
+    background-color: #F9F9F9;
+}
+
+.attendance-staff-list__table-cell {
+    padding: 12px 20px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    color: #737373;
+}
+
+.attendance-staff-list__table-cell:first-child {
+    padding-left: 40px;
+}
+
+.attendance-staff-list__table-cell:last-child {
+    padding-right: 40px;
+}
+
+.attendance-staff-list__table-cell--name {
+    color: #737373;
+}
+
+/* 詳細リンク */
+.attendance-staff-list__detail-link {
+    color: #737373;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.attendance-staff-list__detail-link:hover {
+    color: #000000;
+}
+
+/* CSV出力ボタン */
+.attendance-staff-list__csv-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.attendance-staff-list__csv-button {
+    margin-left: auto;
+    padding: 8px 16px;
+    background: #000000;
+    color: #FFFFFF;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.attendance-staff-list__csv-button:hover {
+    opacity: 0.8;
+}

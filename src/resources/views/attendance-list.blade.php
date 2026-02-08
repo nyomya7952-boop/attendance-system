@@ -8,23 +8,26 @@
 <div class="attendance-list__content">
     <div class="attendance-list__container">
         <div class="attendance-list__controls">
-            <h1 class="attendance-list__list-button">｜勤怠一覧</h1>
-            <div class="attendance-list__date-selector">
-                <button class="attendance-list__date-arrow attendance-list__date-arrow--prev" type="button" onclick="changeMonth(-1)">
-                    <svg width="35" height="19" viewBox="0 0 35 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M34 1L17.5 17.5L1 1" stroke="#737373" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
+            <img src="{{ asset('images/title_line.png') }}" alt="LINE" class="attendance-list__title-line">
+            <h1 class="attendance-list__list-title">勤怠一覧</h1>
+        </div>
+        <div class="attendance-list__date-selector">
+            <a class="attendance-list__date-arrow attendance-list__date-arrow--prev" href="{{ route('attendance.list', ['month' => $prevMonth]) }}">
+                <img src="{{ asset('images/left_arrow.png') }}" alt="前月" class="attendance-list__left-arrow">
+                <span class="attendance-list__date-arrow-text">前月</span>
+            </a>
+            <div class="attendance-list__date-center">
+                <img src="{{ asset('images/calender.png') }}" alt="カレンダー" class="attendance-list__calendar">
                 <span class="attendance-list__date-display">{{ $currentMonth ?? now()->format('Y/m') }}</span>
-                <button class="attendance-list__date-arrow attendance-list__date-arrow--next" type="button" onclick="changeMonth(1)">
-                    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 14L10 1L19 14" stroke="#737373" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
             </div>
+            <a class="attendance-list__date-arrow attendance-list__date-arrow--next" href="{{ route('attendance.list', ['month' => $nextMonth]) }}">
+                <img src="{{ asset('images/right_arrow.png') }}" alt="翌月" class="attendance-list__right-arrow">
+                <span class="attendance-list__date-arrow-text">翌月</span>
+            </a>
         </div>
         <div class="attendance-list__table-container">
-            <table class="attendance-list__table">
+            <div class="attendance-list__table-scroll">
+                <table class="attendance-list__table">
                 <thead class="attendance-list__table-header">
                     <tr>
                         <th class="attendance-list__table-header-cell">日付</th>
@@ -43,8 +46,8 @@
                                     {{ $attendance->formatted_date }}
                                 </td>
                                 @if($attendance->started_at)
-                                    <td class="attendance-list__table-cell">{{ $attendance->started_at->format('H:i') }}</td>
-                                    <td class="attendance-list__table-cell">{{ $attendance->ended_at ? $attendance->ended_at->format('H:i') : '-' }}</td>
+                                    <td class="attendance-list__table-cell">{{ \Illuminate\Support\Carbon::parse($attendance->started_at)->format('H:i') }}</td>
+                                    <td class="attendance-list__table-cell">{{ $attendance->ended_at ? \Illuminate\Support\Carbon::parse($attendance->ended_at)->format('H:i') : '-' }}</td>
                                     <td class="attendance-list__table-cell">
                                         @if($attendance->total_break_minutes)
                                             @php
@@ -80,19 +83,10 @@
                         @endforeach
                     @endif
                 </tbody>
-            </table>
+                </table>
+            </div>
         </div>
     </div>
 </div>
-
-@section('js')
-<script>
-function changeMonth(direction) {
-    const currentMonth = '{{ $currentMonth ?? now()->format("Y/m") }}';
-    const [year, month] = currentMonth.split('/').map(Number);
-    const date = new Date(year, month - 1 + direction, 1);
-    window.location.href = '{{ route("attendance.list") }}?month=' + date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0');
-}
-</script>
 @endsection
 

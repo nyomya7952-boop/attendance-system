@@ -1,0 +1,146 @@
+/* 申請一覧画面（一般ユーザー） */
+
+body {
+    background: #F0EFF2;
+}
+
+.staff-list__content {
+    position: relative;
+    width: 100%;
+    max-width: 1512px;
+    margin: 0 auto;
+    padding: 28px 20px;
+    min-height: calc(100vh - 80px);
+}
+
+.staff-list__container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.staff-list__controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.staff-list__title-line {
+    width: auto;
+    height: auto;
+}
+
+.staff-list__list-title {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    color: #000000;
+}
+
+.staff-list__table-container {
+    background: #FFFFFF;
+    border-radius: 10px;
+    margin: 0 auto;
+    padding: 20px 0;
+    max-width: 900px;
+    max-height: calc(100vh - 300px);
+    overflow: hidden;
+}
+
+.staff-list__table-scroll {
+    max-height: calc(100vh - 300px);
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.staff-list__table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.staff-list__table-header {
+    border-bottom: 3px solid #E1E1E1;
+}
+
+.staff-list__table-header-cell {
+    padding: 12px 20px;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    color: #737373;
+    background: #FFFFFF;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.staff-list__table-body {
+    background: #FFFFFF;
+}
+
+.staff-list__table-row {
+    border-bottom: 2px solid #E1E1E1;
+    transition: background-color 0.2s;
+}
+
+.staff-list__table-row:last-child {
+    border-bottom: none;
+}
+
+.staff-list__table-row:hover {
+    background-color: #F9F9F9;
+}
+
+.staff-list__table-cell {
+    padding: 10px 5px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    letter-spacing: 0.15em;
+    color: #737373;
+    text-align: center;
+}
+
+.staff-list__detail-link {
+    color: #000000;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.staff-list__detail-link:hover {
+    color: #737373;
+}
+
+.staff-list__table-cell--status {
+    width: 100px;
+}
+
+.staff-list__attendance-link {
+    color: #000000;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.staff-list__table-cell--name {
+    width: 200px;
+}
+
+.staff-list__table-cell--email {
+    width: 250px;
+}
+
+.staff-list__table-cell--monthly-attendance {
+    width: 100px;
+}
