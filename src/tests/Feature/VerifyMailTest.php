@@ -8,10 +8,31 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Role as RoleModel;
+use App\Enums\Role as RoleEnum;
 
 class VerifyMailTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seedRoles();
+    }
+
+    private function seedRoles(): void
+    {
+        RoleModel::query()->forceCreate([
+            'id' => RoleEnum::GENERAL_USER->value,
+            'name' => RoleEnum::GENERAL_USER->label(),
+        ]);
+        RoleModel::query()->forceCreate([
+            'id' => RoleEnum::ADMIN->value,
+            'name' => RoleEnum::ADMIN->label(),
+        ]);
+    }
+
     /**
      * 会員登録後、認証メールが送信される
      */
@@ -26,9 +47,10 @@ class VerifyMailTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'role_id' => RoleEnum::GENERAL_USER->value,
         ];
 
-        $response = $this->post(route('register.post'), $userData);
+        $response = $this->post(route('register'), $userData);
         $response->assertRedirect(route('verification.notice'));
 
         // ユーザーがデータベースに登録されていることを確認
@@ -56,9 +78,10 @@ class VerifyMailTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'role_id' => RoleEnum::GENERAL_USER->value,
         ];
 
-        $response = $this->post(route('register.post'), $userData);
+        $response = $this->post(route('register'), $userData);
         $response->assertRedirect(route('verification.notice'));
 
         // 2. メール認証誘導画面を表示する
@@ -74,9 +97,9 @@ class VerifyMailTest extends TestCase
     }
 
     /**
-     * メール認証サイトのメール認証を完了すると、プロフィール設定画面に遷移する
+     * メール認証サイトのメール認証を完了すると、勤怠登録画面に遷移する
      */
-    public function testEmailVerificationRedirectsToProfileSetting()
+    public function testEmailVerificationRedirectsToAttendance()
     {
         // 1. 会員登録する
         $userData = [
@@ -84,9 +107,10 @@ class VerifyMailTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'role_id' => RoleEnum::GENERAL_USER->value,
         ];
 
-        $response = $this->post(route('register.post'), $userData);
+        $response = $this->post(route('register'), $userData);
         $response->assertRedirect(route('verification.notice'));
 
         // 2. ユーザーを取得し、認証前の状態を確認
@@ -102,7 +126,7 @@ class VerifyMailTest extends TestCase
             ['id' => $user->id, 'hash' => sha1($user->getEmailForVerification())]
         );
         $response = $this->get($verificationUrl);
-        $response->assertRedirect(route('user.edit'));
+        $response->assertRedirect(route('attendance.index'));
 
         // 4. 認証後の状態を確認
         $user->refresh();
@@ -110,8 +134,8 @@ class VerifyMailTest extends TestCase
         // 認証後はログイン状態であること
         $this->assertAuthenticatedAs($user);
 
-        // 5. プロフィール設定画面に遷移できることを確認
-        $response = $this->get(route('user.edit'));
+        // 5. 勤怠登録画面に遷移できることを確認
+        $response = $this->get(route('attendance.index'));
         $response->assertStatus(200);
     }
 }

@@ -34,3 +34,4 @@ docker/mysql/data/*
 .cursorrules
 
 テーブル構成.md
+generate_er_diagram.py

@@ -43,41 +43,41 @@
                         @foreach($attendances as $attendance)
                             <tr class="attendance-list__table-row">
                                 <td class="attendance-list__table-cell attendance-list__table-cell--name">
-                                    {{ $attendance->user->name }}
+                                    {{ $attendance->name }}
                                 </td>
                                 @if($attendance->started_at)
                                     <td class="attendance-list__table-cell">{{ \Illuminate\Support\Carbon::parse($attendance->started_at)->format('H:i') }}</td>
-                                    <td class="attendance-list__table-cell">{{ $attendance->ended_at ? \Illuminate\Support\Carbon::parse($attendance->ended_at)->format('H:i') : '-' }}</td>
+                                    <td class="attendance-list__table-cell">{{ $attendance->ended_at ? \Illuminate\Support\Carbon::parse($attendance->ended_at)->format('H:i') : '' }}</td>
                                     <td class="attendance-list__table-cell">
-                                        @if($attendance->total_break_minutes)
+                                        @if($attendance->total_break_minutes !== null)
                                             @php
                                                 $hours = floor($attendance->total_break_minutes / 60);
                                                 $minutes = $attendance->total_break_minutes % 60;
                                             @endphp
                                             {{ $hours }}:{{ str_pad($minutes, 2, '0', STR_PAD_LEFT) }}
-                                        @else
-                                            -
                                         @endif
                                     </td>
                                     <td class="attendance-list__table-cell">
-                                        @if($attendance->total_work_minutes)
+                                        @if($attendance->total_work_minutes !== null)
                                             @php
                                                 $hours = floor($attendance->total_work_minutes / 60);
                                                 $minutes = $attendance->total_work_minutes % 60;
                                             @endphp
                                             {{ $hours }}:{{ str_pad($minutes, 2, '0', STR_PAD_LEFT) }}
-                                        @else
-                                            -
                                         @endif
                                     </td>
                                 @else
-                                    <td class="attendance-list__table-cell">-</td>
-                                    <td class="attendance-list__table-cell">-</td>
-                                    <td class="attendance-list__table-cell">-</td>
-                                    <td class="attendance-list__table-cell">-</td>
+                                    <td class="attendance-list__table-cell"></td>
+                                    <td class="attendance-list__table-cell"></td>
+                                    <td class="attendance-list__table-cell"></td>
+                                    <td class="attendance-list__table-cell"></td>
                                 @endif
                                 <td class="attendance-list__table-cell">
-                                    <a href="{{ route('admin.attendance.show', $attendance->id) }}" class="attendance-list__detail-link">詳細</a>
+                                    @if($attendance->attendance_id)
+                                        <a href="{{ route('admin.attendance.show', $attendance->attendance_id) }}" class="attendance-list__detail-link">詳細</a>
+                                    @else
+                                        <a href="{{ route('admin.attendance.detail.byDate', ['date' => $currentDateShort, 'user_id' => $attendance->user_id]) }}" class="attendance-list__detail-link">詳細</a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

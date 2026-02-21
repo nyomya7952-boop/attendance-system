@@ -162,6 +162,15 @@ class AttendanceService
             $attendanceBreak->break_end_at = now();
             $attendance->status = AttendanceStatus::CLOCKED_IN;
             $attendanceBreak->save();
+
+            // 休憩合計時間を更新（終了済みの休憩のみ集計）
+            $totalBreakMinutes = $attendance->attendanceBreak()
+                ->whereNotNull('break_end_at')
+                ->get()
+                ->sum(function ($break) {
+                    return $break->break_end_at->diffInMinutes($break->break_start_at);
+                });
+            $attendance->total_break_minutes = $totalBreakMinutes;
             $attendance->save();
 
             return redirect()->route('attendance.index')

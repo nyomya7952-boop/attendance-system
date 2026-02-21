@@ -16,8 +16,11 @@ class AttendanceController extends Controller
      */
     public function index(Request $request)
     {
-        $currentMonth = $request->get('month', now()->format('Y-m'));
+        $rawMonth = (string) $request->get('month', now()->format('Y-m'));
+        $currentMonth = str_replace('/', '-', $rawMonth);
         $date = \Carbon\Carbon::parse($currentMonth . '-01');
+        $monthStart = $date->copy()->startOfMonth();
+        $monthEnd = $date->copy()->endOfMonth();
 
         // 前月・翌月の取得
         $prevMonth = $date->copy()->subMonth()->format('Y-m');
@@ -25,24 +28,42 @@ class AttendanceController extends Controller
 
         // 勤怠データの取得
         $attendances = Attendance::where('user_id', auth()->id())
-            ->whereYear('work_date', $date->year)
-            ->whereMonth('work_date', $date->month)
+            ->whereBetween('work_date', [$monthStart->toDateString(), $monthEnd->toDateString()])
             ->orderBy('work_date', 'asc')
             ->get()
-            ->map(function ($attendance) {
+            ->keyBy(function ($attendance) {
                 $workDate = is_string($attendance->work_date)
                     ? \Carbon\Carbon::parse($attendance->work_date)
                     : $attendance->work_date;
-                $dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'][$workDate->dayOfWeek];
-                $attendance->formatted_date = $workDate->format('m/d') . '(' . $dayOfWeek . ')';
-                return $attendance;
+                return $workDate->toDateString();
             });
+
+        $attendanceRows = collect();
+        for ($day = $monthStart->copy(); $day->lte($monthEnd); $day->addDay()) {
+            $attendance = $attendances->get($day->toDateString());
+            $dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'][$day->dayOfWeek];
+            if ($attendance) {
+                $attendance->formatted_date = $day->format('m/d') . '(' . $dayOfWeek . ')';
+                $attendanceRows->push($attendance);
+                continue;
+            }
+
+            $attendanceRows->push((object) [
+                'formatted_date' => $day->format('m/d') . '(' . $dayOfWeek . ')',
+                'work_date' => $day->toDateString(),
+                'started_at' => null,
+                'ended_at' => null,
+                'total_break_minutes' => null,
+                'total_work_minutes' => null,
+                'id' => null,
+            ]);
+        }
 
         return view('attendance-list', [
             'currentMonth' => $date->format('Y/m'),
             'prevMonth' => $prevMonth,
             'nextMonth' => $nextMonth,
-            'attendances' => $attendances,
+            'attendanceRows' => $attendanceRows,
         ]);
     }
 
@@ -52,7 +73,11 @@ class AttendanceController extends Controller
     public function show($id)
     {
         // リクエストパラメーターに紐づく勤怠データを取得
-        $attendance = Attendance::with('attendanceBreak')->findOrFail($id);
+        $attendance = Attendance::with([
+            'attendanceBreak' => function ($query) {
+                $query->orderBy('break_start_at', 'asc');
+            },
+        ])->findOrFail($id);
         $attendanceRequest = AttendanceRequest::where('attendance_id', $attendance->id)->first();
         return view('attendance-show', [
             'attendance' => $attendance,
@@ -120,5 +145,6 @@ class AttendanceController extends Controller
         $attendance->save();
         return redirect()->route('attendance.detail', $id)->with('success', '勤怠データを更新しました。');
     }
+
 }
 

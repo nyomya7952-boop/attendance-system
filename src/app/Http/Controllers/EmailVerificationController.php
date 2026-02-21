@@ -96,7 +96,7 @@ class EmailVerificationController extends Controller
 
         // セッションからメールアドレスを削除し、トップページにリダイレクト
         $request->session()->forget('verification_email');
-        return redirect('/');
+        return redirect()->route('attendance.index');
     }
 }
 

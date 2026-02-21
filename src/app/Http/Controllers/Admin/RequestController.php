@@ -53,8 +53,11 @@ class RequestController extends Controller
         {
         // リクエストパラメーターに紐づく申請データを取得
         $attendanceRequest = AttendanceRequest::with('attendanceRequestBreaks')->findOrFail($attendance_correct_request_id);
+        $isApproved = $attendanceRequest->status === AttendanceRequestStatus::APPROVED->value
+            || AttendanceApproval::where('attendance_request_id', $attendance_correct_request_id)->exists();
         return view('admin.approve', [
             'attendanceRequest' => $attendanceRequest,
+            'isApproved' => $isApproved,
         ]);
     }
 
@@ -75,6 +78,7 @@ class RequestController extends Controller
 
         // 申請データ上「承認済み」に更新
         $attendanceRequest->status = AttendanceRequestStatus::APPROVED->value;
+        $attendanceRequest->approver_id = auth()->user()->id;
         $attendanceRequest->save();
 
 

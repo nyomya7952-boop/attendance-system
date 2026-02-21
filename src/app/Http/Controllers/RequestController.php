@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\AttendanceRequest;
 use App\Enums\AttendanceRequestStatus;
+use App\Models\AttendanceRequestBreak;
 
 class RequestController extends Controller
 {
@@ -20,13 +21,15 @@ class RequestController extends Controller
             ->whereDate('attendances.work_date', '<=', now()->subMonth()->endOfMonth())
             ->select('attendances.*', 'attendance_requests.id as attendance_request_id')
             ->get();
-        if ($attendances->isEmpty()) {
-            return redirect()->route('request.list')->with('error', '前月分の勤怠データが存在しません。');
-        }
+
+        // 未申請のデータがある場合は申請する
         if ($attendances->contains(fn ($attendance) => is_null($attendance->attendance_request_id))) {
             // 前月分の勤怠データを申請する
             foreach ($attendances as $attendance) {
-                AttendanceRequest::create([
+                if (!is_null($attendance->attendance_request_id)) {
+                    continue;
+                }
+                $attendanceRequest = AttendanceRequest::create([
                     'attendance_id' => $attendance->id,
                     'requested_work_date' => $attendance->work_date,
                     'requested_started_at' => $attendance->started_at,
@@ -36,7 +39,7 @@ class RequestController extends Controller
                     'status' => AttendanceRequestStatus::SUBMITTED->value,
                 ]);
                 // 紐づく休憩データも申請する
-                foreach ($attendance->attendanceBreak() as $break) {
+                foreach ($attendance->attendanceBreak as $break) {
                     AttendanceRequestBreak::create([
                         'attendance_request_id' => $attendanceRequest->id,
                         'break_start_at' => $break->break_start_at,
@@ -53,10 +56,14 @@ class RequestController extends Controller
         if ($tab === 'submitted') {
             $attendanceRequests = AttendanceRequest::where('requested_by', auth()->id())
                 ->where('status', AttendanceRequestStatus::SUBMITTED->value)
+                ->with('requestedBy')
+                ->orderBy('requested_work_date', 'asc')
                 ->get();
         } elseif ($tab === 'approved') {
             $attendanceRequests = AttendanceRequest::where('requested_by', auth()->id())
                 ->where('status', AttendanceRequestStatus::APPROVED->value)
+                ->with('requestedBy')
+                ->orderBy('requested_work_date', 'asc')
                 ->get();
         } else {
             return redirect()->route('request.list')->with('error', '不正なタブです。');

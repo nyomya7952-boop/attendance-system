@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\AttendanceRequest;
 use App\Http\Requests\AttendanceUpdateRequest;
+use App\Models\User;
 
 class AttendanceController extends Controller
 {
@@ -22,8 +23,15 @@ class AttendanceController extends Controller
         $prevDay = $date->copy()->subDay()->format('Y-m-d');
         $nextDay = $date->copy()->addDay()->format('Y-m-d');
 
-        // 勤怠データの取得
-        $attendances = Attendance::whereDate('work_date', $date->format('Y-m-d'))->orderBy('user_id', 'asc')->get();
+        // 全ユーザの勤怠データを取得
+        $attendances = User::leftJoin('attendances', function ($join) use ($date) {
+            $join->on('attendances.user_id', '=', 'users.id')
+                ->whereDate('attendances.work_date', $date->format('Y-m-d'));
+        })
+            ->select('users.*', 'attendances.*', 'users.id as user_id', 'attendances.id as attendance_id')
+            ->orderBy('users.id', 'asc')
+            ->orderBy('users.role_id', 'desc')
+            ->get();
 
         return view('admin.attendance-list', [
             'currentDate' => $date->format('Y年m月d日'),

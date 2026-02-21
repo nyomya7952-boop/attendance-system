@@ -7,6 +7,7 @@ use App\Models\AttendanceRequest;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use App\Enums\AttendanceRequestStatus;
+use App\Enums\Role;
 
 class AttendanceRequestSeeder extends Seeder
 {
@@ -15,41 +16,46 @@ class AttendanceRequestSeeder extends Seeder
      */
     public function run(): void
     {
-        $attendances = Attendance::whereRaw('id % 3 = 1')->get();
-        $users = User::all();
+        $attendances = Attendance::whereRaw('id % 3 = 1')
+            ->whereHas('user', function ($query) {
+                $query->where('role_id', Role::GENERAL_USER->value);
+            })
+            ->get();
+        $generalUsers = User::where('role_id', Role::GENERAL_USER->value)->get();
+        $adminUsers = User::where('role_id', Role::ADMIN->value)->get();
 
-        if ($attendances->isEmpty() || $users->isEmpty()) {
+        if ($attendances->isEmpty() || $generalUsers->isEmpty()) {
             $this->command->warn('勤怠データまたはユーザーデータが存在しません。先にAttendanceSeederとUserSeederを実行してください。');
             return;
         }
 
         // 各勤怠データに対して0〜2個の申請データを作成
         foreach ($attendances as $attendance) {
-            $requestCount = rand(0, 2);
+            $requestCount = rand(0, 1);
 
             for ($i = 0; $i < $requestCount; $i++) {
-                $requestedStartedAt = \Carbon\Carbon::parse($attendance->started_at)
-                    ->addMinutes(rand(-30, 30));
-                $requestedEndedAt = \Carbon\Carbon::parse($attendance->ended_at)
-                    ->addMinutes(rand(-30, 30));
+                $requestedStartedAt = \Carbon\Carbon::parse($attendance->started_at);
+                $requestedEndedAt = \Carbon\Carbon::parse($attendance->ended_at);
 
                 // 申請者
-                $requestedBy = $users->random();
+                $requestedBy = $attendance->user_id;
 
-                // 承認者（申請者以外のユーザー、管理者ロールを持つユーザーを優先）
-                $approver = $users->where('id', '!=', $requestedBy->id)
-                    ->where('role_id', 2) // 管理者ロール
-                    ->first() ?? $users->where('id', '!=', $requestedBy->id)->first();
+                $status = $this->getRandomStatus();
+                $approver = null;
+                if ($status === AttendanceRequestStatus::APPROVED->value) {
+                    $approver = $adminUsers->where('id', '!=', $requestedBy)->first()
+                        ?? $generalUsers->where('id', '!=', $requestedBy)->first();
+                }
 
                 AttendanceRequest::factory()->create([
                     'attendance_id' => $attendance->id,
                     'requested_work_date' => $requestedStartedAt->format('Y-m-d'),
                     'requested_started_at' => $requestedStartedAt,
                     'requested_ended_at' => $requestedEndedAt,
-                    'remarks' => $this->getRandomRemarks(),
-                    'requested_by' => $requestedBy->id,
+                    'remarks' => $attendance->remarks,
+                    'requested_by' => $requestedBy,
                     'approver_id' => $approver?->id,
-                    'status' => $this->getRandomStatus(),
+                    'status' => $status,
                 ]);
 
 

@@ -1,6 +1,6 @@
-# Marketplace Laravel
+# 勤怠管理システム（attendance-system）
 
-Laravel を使用したマーケットプレイスアプリケーションです。Docker を使用して開発環境を構築します。
+Laravel を使用した勤怠管理アプリケーションです。Docker を使用して開発環境を構築します。
 
 ## 使用技術
 
@@ -15,6 +15,10 @@ Laravel を使用したマーケットプレイスアプリケーションです
 - **Web Server**: Nginx
 - **Database**: MySQL 8.0
 - **Database Management**: phpMyAdmin
+
+## データベース ER 図
+
+![データベース ER 図](docs/database_er_diagram.png)
 
 ## 環境構築手順
 
@@ -114,43 +118,9 @@ Laravel を使用したマーケットプレイスアプリケーションです
 
    完了したら `exit` でコンテナから抜けます。
 
-5. **サンプル画像の格納**
-
-   以下 URL からサンプル画像をすべてダウンロードし、所定のディレクトリに格納します。
-
-   ```text
-   // ダウンロードファイル名を変更しないこと。
-   // seederファイルに下記ファイル名で初期データを登録しているため。
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Armani+Mens+Clock.jpg
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/HDD+Hard+Disk.jpg
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/iLoveIMG+d.jpg
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Leather+Shoes+Product+Photo.jpg
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Living+Room+Laptop.jpg
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Music+Mic+4632231.jpg
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Purse+fashion+pocket.jpg
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Tumbler+souvenir.jpg
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Waitress+with+Coffee+Grinder.jpg
-   https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/%E5%A4%96%E5%87%BA%E3%83%A1%E3%82%A4%E3%82%AF%E3%82%A2%E3%83%83%E3%83%95%E3%82%9A%E3%82%BB%E3%83%83%E3%83%88.jpg
-   ```
-
-   ※　リスト一番したのダウンロードファイル名は「外出メイクアップセット.jpg」である。
-
-   ```text
-   // 格納先
-   src\storage\app\public\items
-   ```
-
-   格納後に下記コマンドを実行します。
-
-   ```bash
-   // 格納先
-   php artisan storage:link
-   ```
-
-6. **アプリケーションへのアクセス**
+5. **アプリケーションへのアクセス**
 
    ブラウザで以下の URL にアクセスして確認します。
-
    - **アプリケーション**: [http://localhost](http://localhost)
    - **phpMyAdmin**: [http://localhost:8080](http://localhost:8080)
 
@@ -219,102 +189,3 @@ Laravel を使用したマーケットプレイスアプリケーションです
    ```bash
    php artisan test
    ```
-
-## Stripe テスト手順
-
-### Stripe CLI のインストール
-
-Stripe Webhook をテストするために、Stripe CLI を使用します。
-Stripe CLI がインストールされていない場合は、以下の手順でインストールします。
-
-**Linux (Ubuntu/Debian):**
-
-```bash
-# 最新版をダウンロード（amd64 / arm64 は環境に合わせて選択）
-# 例: uname -m が x86_64 の場合は amd64、aarch64 の場合は arm64
-curl -L https://github.com/stripe/stripe-cli/releases/latest/download/stripe_linux_amd64.tar.gz -o stripe.tar.gz
-
-# 展開
-tar -xzf stripe.tar.gz
-
-# 実行ファイルを配置
-sudo mv stripe /usr/local/bin/
-
-# 実行権限（通常は不要だが念のため）
-sudo chmod +x /usr/local/bin/stripe
-
-# 確認
-stripe --version
-```
-
-**macOS:**
-
-```bash
-# Homebrewを使用
-brew install stripe/stripe-cli/stripe
-```
-
-**Windows:**
-
-[Stripe CLI のダウンロードページ](https://github.com/stripe/stripe-cli/releases/latest)から最新の`.exe`ファイルをダウンロードしてインストールします。
-
-インストール後、以下のコマンドでバージョンを確認します。
-
-```bash
-stripe --version
-```
-
-**Stripe CLI へのログイン**
-
-Stripe CLI を初めて使用する場合は、Stripe アカウントにログインする必要があります。
-
-```bash
-stripe login
-```
-
-このコマンドを実行すると、ブラウザが開き、Stripe アカウントへの認証が求められます。認証が完了すると、CLI が自動的に認証情報を保存します。
-
-### コンビニ支払いのための Webhook のテスト
-
-本プロジェクトでは、Stripe の Webhook を以下の URL で受信します。  
- この URL は Laravel アプリケーション内で Webhook 受信用として定義されています。  
- コンビニ支払いの場合のテストで必要な手順となります。  
- ※ 購入時の支払いがコンビニ支払いの場合、Stripe 処理中は画面上「入金待ち」の状態となります。  
- ※ Webhook により Stripe 処理状況を受領次第、「入金待ち」から「購入済み」に変更されます。
-
-```text
-http://localhost/webhook/stripe
-```
-
-**前提条件**
-
-- Stripe CLI がインストールされていること（`stripe --version`で確認）
-- Stripe CLI にログイン済みであること（`stripe login`でログイン済み）
-- Docker コンテナが起動していること（`docker-compose up -d`で起動済み）
-
-**手順**
-
-marketplace-laravel ディレクトリで以下コマンドを実行します。
-
-```bash
-stripe listen --forward-to http://localhost/webhook/stripe
-```
-
-このコマンドを実行すると、Stripe CLI が Webhook イベントをローカルの`http://localhost/webhook/stripe`に転送します。  
-なお、コマンド実行中はターミナルを閉じないでください。
-
-さらに、起動ログに **Webhook signing secret（`whsec_...`）** が表示されるので、表示された値を `src/.env` の `STRIPE_WEBHOOK_SECRET` に設定してください。  
-設定後、再ビルドしてください。
-
-```bash
-docker compose restart php
-docker compose exec php php artisan config:clear
-```
-
-### カード支払いの場合のテスト用クレジットカード情報
-
-テストで利用するクレジットカードは下記 URL に記載しています。
-
-```text
-https://docs.stripe.com/testing?locale=ja-JP
-```

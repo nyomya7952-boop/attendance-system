@@ -26,27 +26,56 @@ class StaffController extends Controller
      */
     public function showAttendanceStaffList(Request $request, $id)
     {
-        $currentMonth = $request->get('month', now()->format('Y-m'));
+        $rawMonth = (string) $request->get('month', now()->format('Y-m'));
+        $currentMonth = str_replace('/', '-', $rawMonth);
         $date = Carbon::parse($currentMonth . '-01');
+        $monthStart = $date->copy()->startOfMonth();
+        $monthEnd = $date->copy()->endOfMonth();
 
         // 前月・翌月の取得
         $prevMonth = $date->copy()->subMonth()->format('Y-m');
         $nextMonth = $date->copy()->addMonth()->format('Y-m');
 
         $staff = User::findOrFail($id);
-        $attendances = Attendance::with('user')
-            ->where('user_id', $id)
-            ->whereYear('work_date', $date->year)
-            ->whereMonth('work_date', $date->month)
+        $attendances = Attendance::where('user_id', $id)
+            ->whereBetween('work_date', [$monthStart->toDateString(), $monthEnd->toDateString()])
             ->orderBy('work_date', 'asc')
-            ->get();
+            ->get()
+            ->keyBy(function ($attendance) {
+                $workDate = is_string($attendance->work_date)
+                    ? Carbon::parse($attendance->work_date)
+                    : $attendance->work_date;
+                return $workDate->toDateString();
+            });
+
+        $attendanceRows = collect();
+        for ($day = $monthStart->copy(); $day->lte($monthEnd); $day->addDay()) {
+            $attendance = $attendances->get($day->toDateString());
+            $dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'][$day->dayOfWeek];
+            if ($attendance) {
+                $attendance->formatted_date = $day->format('m/d') . '(' . $dayOfWeek . ')';
+                $attendanceRows->push($attendance);
+                continue;
+            }
+
+            $attendanceRows->push((object) [
+                'formatted_date' => $day->format('m/d') . '(' . $dayOfWeek . ')',
+                'work_date' => $day->toDateString(),
+                'user_id' => $staff->id,
+                'started_at' => null,
+                'ended_at' => null,
+                'total_break_minutes' => null,
+                'total_work_minutes' => null,
+                'id' => null,
+            ]);
+        }
 
         return view('admin.attendance-staff-list', [
             'staff' => $staff,
             'currentMonth' => $date->format('Y/m'),
             'prevMonth' => $prevMonth,
             'nextMonth' => $nextMonth,
-            'attendances' => $attendances,
+            'attendanceRows' => $attendanceRows,
         ]);
     }
 
@@ -65,7 +94,7 @@ class StaffController extends Controller
             ->orderBy('work_date', 'asc')
             ->get();
 
-        $filename = 'staff_attendance_' . $staff->id . '_' . $date->format('Y_m') . '.csv';
+        $filename = 'staff_attendance_' . $staff->name . '_' . $date->format('Y_m') . '.csv';
 
         return response()->streamDownload(function () use ($attendances, $staff) {
             $handle = fopen('php://output', 'w');

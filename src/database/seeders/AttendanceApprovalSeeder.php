@@ -16,14 +16,7 @@ class AttendanceApprovalSeeder extends Seeder
      */
     public function run(): void
     {
-        $targetMonthStart = now()->subMonthsNoOverflow(2)->startOfMonth();
-        $targetMonthEnd = $targetMonthStart->copy()->endOfMonth();
-        $attendanceRequests = AttendanceRequest::where('status', '!=', AttendanceRequestStatus::APPROVED->value)
-            ->whereBetween('requested_work_date', [
-                $targetMonthStart->toDateString(),
-                $targetMonthEnd->toDateString(),
-            ])
-            ->get();
+        $attendanceRequests = AttendanceRequest::where('status', AttendanceRequestStatus::APPROVED->value)->get();
         $users = User::all();
 
         if ($attendanceRequests->isEmpty() || $users->isEmpty()) {

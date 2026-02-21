@@ -72,14 +72,13 @@ body {
     margin: 0 auto;
     padding: 20px 0;
     max-width: 900px;
-    max-height: calc(100vh - 300px);
-    overflow: hidden;
+    max-height: none;
+    overflow: visible;
 }
 
 .stamp-correction-request-list__table-scroll {
-    max-height: calc(100vh - 300px);
-    overflow-x: auto;
-    overflow-y: auto;
+    max-height: none;
+    overflow: visible;
 }
 
 .stamp-correction-request-list__table {

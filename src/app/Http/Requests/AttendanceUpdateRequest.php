@@ -24,7 +24,7 @@ class AttendanceUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'started_at' => ['nullable', 'date_format:H:i'],
+            'started_at' => ['required', 'date_format:H:i'],
             'ended_at' => ['nullable', 'date_format:H:i'],
             'remarks' => ['required', 'string'],
             'breaks' => ['array'],
@@ -42,6 +42,7 @@ class AttendanceUpdateRequest extends FormRequest
     {
         return [
             'remarks.required' => '備考を記入してください',
+            'started_at.required' => '出勤時間を入力してください',
         ];
     }
 
@@ -69,6 +70,7 @@ class AttendanceUpdateRequest extends FormRequest
 
             if ($startedAt && $endedAt && $startedAt->gt($endedAt)) {
                 $validator->errors()->add('started_at', '出勤時間もしくは退勤時間が不適切な値です');
+                return;
             }
 
             foreach ($this->input('breaks', []) as $index => $break) {
@@ -81,13 +83,13 @@ class AttendanceUpdateRequest extends FormRequest
                 if ($breakStartAt && $startedAt && $breakStartAt->lt($startedAt)) {
                     $validator->errors()->add("breaks.$index.break_start_at", '休憩時間が不適切な値です');
                 }
-                if ($breakStartAt && $endedAt && $breakStartAt->gt($endedAt)) {
+                elseif ($breakStartAt && $endedAt && $breakStartAt->gt($endedAt)) {
                     $validator->errors()->add("breaks.$index.break_start_at", '休憩時間が不適切な値です');
                 }
-                if ($breakEndAt && $endedAt && $breakEndAt->gt($endedAt)) {
+                elseif ($breakEndAt && $endedAt && $breakEndAt->gt($endedAt)) {
                     $validator->errors()->add("breaks.$index.break_end_at", '休憩時間もしくは退勤時間が不適切な値です');
                 }
-                if ($breakStartAt && $breakEndAt && $breakEndAt->lt($breakStartAt)) {
+                elseif ($breakStartAt && $breakEndAt && $breakEndAt->lt($breakStartAt)) {
                     $validator->errors()->add("breaks.$index.break_end_at", '休憩時間が不適切な値です');
                 }
             }

@@ -56,7 +56,7 @@
         </div>
         <form method="POST" action="{{ route('admin.request.approve', ['attendance_correct_request_id' => $attendanceRequest->id]) }}">
             @csrf
-            @if($attendanceRequest->status === \App\Enums\AttendanceRequestStatus::SUBMITTED->value)
+            @if(!$isApproved)
                 <button type="submit" class="approve__approval-button--enabled">承認する</button>
             @else
                 <button type="button" class="approve__approval-button--disabled" disabled>承認済み</button>

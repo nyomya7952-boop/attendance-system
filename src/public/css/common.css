@@ -97,6 +97,7 @@ body {
 /* メインコンテンツ */
 main {
     position: relative;
+    max-width: 1540px;
 }
 
 .flash:empty {

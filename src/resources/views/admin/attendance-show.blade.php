@@ -26,8 +26,12 @@
             </div>
             <!-- 修正申請がない場合 -->
             @if(!$attendanceRequest)
-                <form action="{{ route('attendance.update', $attendance->id) }}" method="post">
+                <form action="{{ ($attendance->id ?? null) ? route('admin.attendance.update', $attendance->id) : route('admin.attendance.store.byDate', ['date' => $attendance->work_date ? \Illuminate\Support\Carbon::parse($attendance->work_date)->format('Y-m-d') : '']) }}" method="post">
                     @csrf
+                    @if(!($attendance->id ?? null))
+                        <input type="hidden" name="date" value="{{ $attendance->work_date ? \Illuminate\Support\Carbon::parse($attendance->work_date)->format('Y-m-d') : '' }}">
+                        <input type="hidden" name="user_id" value="{{ $attendance->user_id }}">
+                    @endif
                     <div class="attendance-show__divider"></div>
                         <div class="attendance-show__row">
                             <div class="attendance-show__label">出勤・退勤</div>

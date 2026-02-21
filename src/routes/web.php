@@ -6,12 +6,14 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\StampingController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceDetailController;
 use App\Http\Controllers\RequestController;
 use App\Enums\Role;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\RequestController as AdminRequestController;
+use App\Http\Controllers\Admin\AttendanceDetailController as AdminAttendanceDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +63,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.list');
     Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])->name('attendance.detail');
     Route::post('/attendance/detail/{id}', [AttendanceController::class, 'update'])->name('attendance.update');
+    Route::get('/attendance/detail', [AttendanceDetailController::class, 'showByDate'])->name('attendance.detail.byDate');
+    Route::post('/attendance/detail', [AttendanceDetailController::class, 'storeByDate'])->name('attendance.store.byDate');
 
     // 申請一覧（一般ユーザー）
     Route::get('/stamp_correction_request/list', [RequestController::class, 'index'])->name('request.list');
@@ -88,6 +92,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // 勤怠一覧・詳細（管理者）
         Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])->name('attendance.list');
+        Route::get('/attendance/detail', [AdminAttendanceDetailController::class, 'showByDate'])->name('attendance.detail.byDate');
+        Route::post('/attendance/detail', [AdminAttendanceDetailController::class, 'storeByDate'])->name('attendance.store.byDate');
         Route::get('/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('attendance.show');
         Route::post('/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('attendance.update');
 

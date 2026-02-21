@@ -123,14 +123,13 @@ body {
     border-radius: 10px;
     margin-top: 20px;
     padding: 20px 0;
-    max-height: calc(100vh - 300px);
-    overflow: hidden;
+    max-height: none;
+    overflow: visible;
 }
 
 .attendance-staff-list__table-scroll {
-    max-height: calc(100vh - 300px);
-    overflow-x: auto;
-    overflow-y: auto;
+    max-height: none;
+    overflow: visible;
 }
 
 /* テーブル */

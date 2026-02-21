@@ -19,7 +19,7 @@ class AttendanceSeeder extends Seeder
         DB::table('attendances')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $users = User::whereIn('id', [1, 4, 5, 7])->get();
+        $users = User::whereIn('id', [1, 4, 5, 7, 10])->get();
 
         if ($users->isEmpty()) {
             $this->command->warn('ユーザーが存在しません。先にUserSeederを実行してください。');
@@ -38,8 +38,8 @@ class AttendanceSeeder extends Seeder
                     continue;
                 }
 
-                $startedAt = now()->subDays($i)->setTime(9, 0, 0);
-                $endedAt = (clone $startedAt)->modify('+8 hours');
+                $startedAt = now()->subDays($i)->setTime(9, 0, 0)->addMinutes(rand(-30, 30));
+                $endedAt = (clone $startedAt)->modify('+8 hours')->addMinutes(rand(-30, 30));
                 $totalBreakMinutes = rand(0, 90);
 
                 Attendance::factory()->create([
@@ -83,8 +83,8 @@ class AttendanceSeeder extends Seeder
                         'started_at' => $startedAt,
                         'ended_at' => $endedAt,
                         'status' => AttendanceStatus::CLOCKED_OUT,
-                        'total_break_minutes' => $totalBreakMinutes,
-                        'total_work_minutes' => $endedAt->diffInMinutes($startedAt) - $totalBreakMinutes,
+                        'total_break_minutes' => null,
+                        'total_work_minutes' => null,
                         'remarks' => $this->getRandomRemarks(),
                     ]);
                 }

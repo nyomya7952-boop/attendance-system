@@ -32,7 +32,7 @@
                 <table class="attendance-staff-list__table">
                 <thead class="attendance-staff-list__table-header">
                     <tr>
-                        <th class="attendance-staff-list__table-header-cell">名前</th>
+                        <th class="attendance-staff-list__table-header-cell">日付</th>
                         <th class="attendance-staff-list__table-header-cell">出勤</th>
                         <th class="attendance-staff-list__table-header-cell">退勤</th>
                         <th class="attendance-staff-list__table-header-cell">休憩</th>
@@ -41,15 +41,15 @@
                     </tr>
                 </thead>
                 <tbody class="attendance-staff-list__table-body">
-                    @if(isset($attendances) && count($attendances) > 0)
-                        @foreach($attendances as $attendance)
+                    @if(isset($attendanceRows) && count($attendanceRows) > 0)
+                        @foreach($attendanceRows as $attendance)
                             <tr class="attendance-staff-list__table-row">
-                                <td class="attendance-staff-list__table-cell attendance-staff-list__table-cell--name">
-                                    {{ $attendance->user->name }}
+                                <td class="attendance-staff-list__table-cell attendance-staff-list__table-cell--date">
+                                    {{ $attendance->formatted_date }}
                                 </td>
                                 @if($attendance->started_at)
                                     <td class="attendance-staff-list__table-cell">{{ \Illuminate\Support\Carbon::parse($attendance->started_at)->format('H:i') }}</td>
-                                    <td class="attendance-staff-list__table-cell">{{ $attendance->ended_at ? \Illuminate\Support\Carbon::parse($attendance->ended_at)->format('H:i') : '-' }}</td>
+                                    <td class="attendance-staff-list__table-cell">{{ $attendance->ended_at ? \Illuminate\Support\Carbon::parse($attendance->ended_at)->format('H:i') : '' }}</td>
                                     <td class="attendance-staff-list__table-cell">
                                         @if($attendance->total_break_minutes)
                                             @php
@@ -57,8 +57,6 @@
                                                 $minutes = $attendance->total_break_minutes % 60;
                                             @endphp
                                             {{ $hours }}:{{ str_pad($minutes, 2, '0', STR_PAD_LEFT) }}
-                                        @else
-                                            -
                                         @endif
                                     </td>
                                     <td class="attendance-staff-list__table-cell">
@@ -68,18 +66,20 @@
                                                 $minutes = $attendance->total_work_minutes % 60;
                                             @endphp
                                             {{ $hours }}:{{ str_pad($minutes, 2, '0', STR_PAD_LEFT) }}
-                                        @else
-                                            -
                                         @endif
                                     </td>
                                 @else
-                                    <td class="attendance-staff-list__table-cell">-</td>
-                                    <td class="attendance-staff-list__table-cell">-</td>
-                                    <td class="attendance-staff-list__table-cell">-</td>
-                                    <td class="attendance-staff-list__table-cell">-</td>
+                                    <td class="attendance-staff-list__table-cell"></td>
+                                    <td class="attendance-staff-list__table-cell"></td>
+                                    <td class="attendance-staff-list__table-cell"></td>
+                                    <td class="attendance-staff-list__table-cell"></td>
                                 @endif
                                 <td class="attendance-staff-list__table-cell">
-                                    <a href="{{ route('admin.attendance.show', $attendance->id) }}" class="attendance-staff-list__detail-link">詳細</a>
+                                    @if($attendance->id)
+                                        <a href="{{ route('admin.attendance.show', $attendance->id) }}" class="attendance-staff-list__detail-link">詳細</a>
+                                    @else
+                                        <a href="{{ route('admin.attendance.detail.byDate', ['date' => $attendance->work_date, 'user_id' => $attendance->user_id]) }}" class="attendance-staff-list__detail-link">詳細</a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

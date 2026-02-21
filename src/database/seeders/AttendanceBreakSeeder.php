@@ -23,6 +23,7 @@ class AttendanceBreakSeeder extends Seeder
         // 各勤怠データに対して1〜3個の休憩データを作成
         foreach ($attendances as $attendance) {
             $breakCount = rand(1, 3);
+            $totalBreakMinutes = 0;
 
             for ($i = 0; $i < $breakCount; $i++) {
                 // 勤怠の開始時刻と終了時刻の間で休憩時間を設定
@@ -46,7 +47,11 @@ class AttendanceBreakSeeder extends Seeder
                     'break_start_at' => $breakStartAt,
                     'break_end_at' => $breakEndAt,
                 ]);
+                $totalBreakMinutes += $breakEndAt->diffInMinutes($breakStartAt);
             }
+            $attendance->total_break_minutes = $totalBreakMinutes;
+            $attendance->total_work_minutes = $endedAt->diffInMinutes($startedAt) - $totalBreakMinutes;
+            $attendance->save();
         }
     }
 }
