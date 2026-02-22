@@ -25,9 +25,6 @@ Laravel を使用した勤怠管理アプリケーションです。Docker を�
 ### 前提条件
 
 - Docker Desktop (または Docker Engine + Docker Compose) がインストールされていること。
-- Stripe アカウント（テストモード）が作成済みであること  
-  ※ 本プロジェクトでは Stripe のテストモードを使用します。  
-  ※ 詳細は「Stripe テスト手順」を確認してください。
 
 ### 構築ステップ
 
@@ -36,7 +33,7 @@ Laravel を使用した勤怠管理アプリケーションです。Docker を�
    ローカルにディレクトリを作成のうえ、ディレクトリ上で下記コマンドを実行します。
 
    ```bash
-   git clone git@github.com:nyomya7952-boop/marketplace-laravel.git
+   git clone git@github.com:nyomya7952-boop/attendance-system.git
    ```
 
 2. **環境設定ファイルの作成**
@@ -71,15 +68,6 @@ Laravel を使用した勤怠管理アプリケーションです。Docker を�
    MAIL_ENCRYPTION=null
    MAIL_FROM_ADDRESS="noreply@example.com"
    MAIL_FROM_NAME="${APP_NAME}"
-   ```
-
-   ```ini
-   //　Stripe設定（設定値を追記してください。）
-   // ※ 値は各自のStripeダッシュボード（テストモード）/ Stripe CLIの出力から取得してください
-   // ※ 詳細は「Stripe テスト手順」を確認してください
-   STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxxxxxx
-   STRIPE_PUBLIC_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxx
-   STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
    ```
 
    ※ .env ファイルは Git 管理対象外です。
