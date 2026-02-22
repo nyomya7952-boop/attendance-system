@@ -38,7 +38,7 @@ Laravel を使用した勤怠管理アプリケーションです。Docker を�
 
 2. **環境設定ファイルの作成**
 
-   `src` ディレクトリにある `.env.example` をコピーして `.env` を作成します。
+   attendance-systemディレクトリ上で、`src` ディレクトリにある `.env.example` をコピーして `.env` を作成します。
 
    Linux/Mac:
 
@@ -177,3 +177,4 @@ Laravel を使用した勤怠管理アプリケーションです。Docker を�
    ```bash
    php artisan test
    ```
+
