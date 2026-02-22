@@ -136,12 +136,12 @@ Laravel を使用した勤怠管理アプリケーションです。Docker を�
 
 2. **設定ファイルの作成**
 
-   php コンテナ上で下記コマンドを実行します。
+   attendance-systemディレクトリ上で、`src` ディレクトリにある `.env` をコピーして `.env.testing` を作成します。
 
    Linux/Mac:
 
    ```bash
-   cp .env .env.testing
+   cp src/.env src/.env.testing
    ```
 
    `src/.env.testing` をエディタで開き、下記の通り修正します。
