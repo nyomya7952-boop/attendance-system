@@ -73,7 +73,7 @@ Route::middleware(['auth'])->group(function () {
 // 管理者用ルート
 Route::prefix('admin')->name('admin.')->group(function () {
     // 管理者ログイン（認証不要）
-    // 注意: Fortifyは /login のみを自動登録するため、/admin/login は手動で定義が必要
+    // Fortifyは /login のみを自動登録するため、/admin/login は手動で定義が必要
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login.show');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('login');
 

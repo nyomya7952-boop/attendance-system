@@ -16,7 +16,7 @@ Laravel を使用した勤怠管理アプリケーションです。Docker を�
 - **Database**: MySQL 8.0
 - **Database Management**: phpMyAdmin
 
-## データベース ER 図
+## ER 図
 
 ![データベース ER 図](docs/database_er_diagram.png)
 
